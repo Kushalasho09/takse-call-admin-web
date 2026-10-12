@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "takse-call"
+  },
+  "targets": {
+    "takse-call": {
+      "hosting": {
+        "admin": [
+          "takse-call-admin"
+        ]
+      }
+    }
+  }
+}
