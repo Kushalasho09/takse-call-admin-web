@@ -315,8 +315,25 @@ class AdminLead {
   final String assignedToUserName;
   final DateTime? assignedAt;
   final String assignmentStatus; // 'unassigned', 'assigned'
+  final String source;
 
   bool get isAssigned => assignmentStatus.toLowerCase() == 'assigned' || assignedToUserId.isNotEmpty || assignedOrgId.isNotEmpty;
+
+  bool get isWebhookSource {
+    final s = source.toLowerCase();
+    return s.contains('webhook') || s.contains('api') || s == 'takse_api';
+  }
+
+  bool get isSheetSource {
+    final s = source.toLowerCase();
+    return s.contains('sheet') || s.contains('excel') || s.contains('csv');
+  }
+
+  String get sourceDisplayName {
+    if (isSheetSource) return 'Excel / Sheet';
+    if (isWebhookSource) return 'Webhook / API';
+    return source.isNotEmpty ? source : 'Webhook / API';
+  }
 
   AdminLead({
     required this.id,
@@ -343,6 +360,7 @@ class AdminLead {
     this.assignedToUserName = '',
     this.assignedAt,
     this.assignmentStatus = 'unassigned',
+    this.source = 'takse_api',
   });
 
   factory AdminLead.fromFirestore(DocumentSnapshot doc) {
@@ -403,6 +421,7 @@ class AdminLead {
       assignedToUserName: userName,
       assignedAt: assignedDate,
       assignmentStatus: statusDerived,
+      source: (data['source'] ?? data['Source'] ?? 'takse_api').toString(),
     );
   }
 
@@ -442,6 +461,7 @@ class AdminLead {
       assignedToUserName: (map['assignedToUserName'] ?? '').toString(),
       assignedAt: map['assignedAt'] is DateTime ? map['assignedAt'] as DateTime : null,
       assignmentStatus: (map['assignmentStatus'] ?? 'unassigned').toString(),
+      source: (map['source'] ?? map['Source'] ?? 'takse_api').toString(),
     );
   }
 
@@ -452,6 +472,7 @@ class AdminLead {
     String? assignedToUserName,
     DateTime? assignedAt,
     String? assignmentStatus,
+    String? source,
   }) {
     return AdminLead(
       id: id,
@@ -478,6 +499,7 @@ class AdminLead {
       assignedToUserName: assignedToUserName ?? this.assignedToUserName,
       assignedAt: assignedAt ?? this.assignedAt,
       assignmentStatus: assignmentStatus ?? this.assignmentStatus,
+      source: source ?? this.source,
     );
   }
 

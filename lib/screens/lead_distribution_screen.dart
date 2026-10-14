@@ -18,6 +18,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
   String _activeCompartment = 'unassigned'; // 'unassigned' (Pending), 'assigned' (Sent), 'all'
   String _selectedOrgFilter = 'all';
   String _selectedTimeSlot = 'all'; // 'all', 'today', 'morning', 'afternoon', 'evening'
+  String _selectedSourceFilter = 'all'; // 'all', 'webhook', 'sheet'
   int _currentPage = 0;
   static const int _pageSize = 15;
 
@@ -55,6 +56,13 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
     } else if (_selectedTimeSlot == 'evening') {
       return dt.hour >= 18 || dt.hour < 6;
     }
+    return true;
+  }
+
+  bool _matchesSource(AdminLead lead) {
+    if (_selectedSourceFilter == 'all') return true;
+    if (_selectedSourceFilter == 'webhook') return lead.isWebhookSource;
+    if (_selectedSourceFilter == 'sheet') return lead.isSheetSource;
     return true;
   }
 
@@ -930,7 +938,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
       builder: (context, _) {
         final query = _searchCtrl.text.toLowerCase().trim();
         final rawLeads = state.leads;
-        final timeFilteredLeads = rawLeads.where(_matchesTimeSlot).toList();
+        final timeFilteredLeads = rawLeads.where(_matchesTimeSlot).where(_matchesSource).toList();
 
         // Compartment filtering
         List<AdminLead> compartmentLeads;
@@ -1957,6 +1965,37 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                   ),
                   const SizedBox(width: 12),
 
+                  // Lead Source Filter (Webhook API vs Excel Sheet)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: AdminColors.surfaceSubtle,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: AdminColors.border),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _selectedSourceFilter,
+                        dropdownColor: AdminColors.surfaceElevated,
+                        style: GoogleFonts.inter(fontSize: 12, color: AdminColors.textPrimary),
+                        items: const [
+                          DropdownMenuItem(value: 'all', child: Text('⚡ All Sources (Webhook & Excel)')),
+                          DropdownMenuItem(value: 'webhook', child: Text('🌐 Webhook / API Inflow')),
+                          DropdownMenuItem(value: 'sheet', child: Text('📊 Excel / CSV / Sheet')),
+                        ],
+                        onChanged: (val) {
+                          if (val != null) {
+                            setState(() {
+                              _selectedSourceFilter = val;
+                              _currentPage = 0;
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+
                   OutlinedButton(
                     onPressed: () {
                       setState(() {
@@ -2001,6 +2040,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                   columnSpacing: 24,
                   columns: const [
                     DataColumn(label: Text('LEAD PROFILE')),
+                    DataColumn(label: Text('SOURCE')),
                     DataColumn(label: Text('BUSINESS / LOCATION')),
                     DataColumn(label: Text('TYPE')),
                     DataColumn(label: Text('STATUS & ALLOCATED ORG')),
@@ -2042,6 +2082,43 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                                 ],
                               ),
                             ],
+                          ),
+                        ),
+
+                        // Source Badge (Webhook API vs Excel Sheet)
+                        DataCell(
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: lead.isWebhookSource
+                                  ? const Color(0xFF38BDF8).withValues(alpha: 0.12)
+                                  : const Color(0xFF10B981).withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: lead.isWebhookSource
+                                    ? const Color(0xFF38BDF8).withValues(alpha: 0.35)
+                                    : const Color(0xFF10B981).withValues(alpha: 0.35),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  lead.isWebhookSource ? Icons.bolt_rounded : Icons.table_chart_rounded,
+                                  size: 13,
+                                  color: lead.isWebhookSource ? const Color(0xFF38BDF8) : const Color(0xFF10B981),
+                                ),
+                                const SizedBox(width: 5),
+                                Text(
+                                  lead.isWebhookSource ? 'Webhook' : 'Excel Sheet',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: lead.isWebhookSource ? const Color(0xFF38BDF8) : const Color(0xFF10B981),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
 
