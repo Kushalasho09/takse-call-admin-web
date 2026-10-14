@@ -18,6 +18,7 @@ class _LeadManagementScreenState extends State<LeadManagementScreen> {
   String _selectedState = 'all';
   String _selectedKyc = 'all';
   String _selectedUserType = 'all';
+  String _selectedSource = 'all';
   int _currentPage = 0;
   static const int _pageSize = 15;
 
@@ -549,6 +550,10 @@ function syncLeadsProcess(forceAll) {
           if (_selectedUserType != 'all' && lead.userType.toUpperCase() != _selectedUserType.toUpperCase()) {
             return false;
           }
+          if (_selectedSource != 'all') {
+            if (_selectedSource == 'webhook' && !lead.isWebhookSource) return false;
+            if (_selectedSource == 'sheet' && !lead.isSheetSource) return false;
+          }
           if (query.isNotEmpty) {
             final mName = lead.name.toLowerCase().contains(query);
             final mPhone = lead.mobileNumber.toLowerCase().contains(query);
@@ -915,6 +920,31 @@ function syncLeadsProcess(forceAll) {
                       ),
                     );
 
+                    final sourceFilterWidget = Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                        color: AdminColors.surfaceSubtle,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: AdminColors.border),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: _selectedSource,
+                          dropdownColor: AdminColors.surfaceElevated,
+                          style: GoogleFonts.inter(color: AdminColors.textPrimary, fontSize: 13),
+                          items: const [
+                            DropdownMenuItem(value: 'all', child: Text('⚡ All Sources')),
+                            DropdownMenuItem(value: 'webhook', child: Text('🌐 Webhook API')),
+                            DropdownMenuItem(value: 'sheet', child: Text('📊 Excel / Sheet')),
+                          ],
+                          onChanged: (v) => setState(() {
+                            _selectedSource = v ?? 'all';
+                            _currentPage = 0;
+                          }),
+                        ),
+                      ),
+                    );
+
                     final countPillWidget = Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
@@ -960,6 +990,7 @@ function syncLeadsProcess(forceAll) {
                               stateFilterWidget,
                               kycFilterWidget,
                               userTypeWidget,
+                              sourceFilterWidget,
                               countPillWidget,
                             ],
                           ),
@@ -997,6 +1028,8 @@ function syncLeadsProcess(forceAll) {
                         kycFilterWidget,
                         const SizedBox(width: 14),
                         userTypeWidget,
+                        const SizedBox(width: 14),
+                        sourceFilterWidget,
                         const SizedBox(width: 14),
                         countPillWidget,
                       ],
@@ -1058,6 +1091,7 @@ function syncLeadsProcess(forceAll) {
                                 headingRowColor: WidgetStateProperty.all(AdminColors.surfaceElevated),
                                 columns: [
                                   DataColumn(label: Text('LEAD NAME & PHONE', style: _colHeaderStyle)),
+                                  DataColumn(label: Text('SOURCE', style: _colHeaderStyle)),
                                   DataColumn(label: Text('EMAIL', style: _colHeaderStyle)),
                                   DataColumn(label: Text('USER TYPE', style: _colHeaderStyle)),
                                   DataColumn(label: Text('STATE & DISTRICT', style: _colHeaderStyle)),
@@ -1196,6 +1230,43 @@ function syncLeadsProcess(forceAll) {
                 ],
               ),
             ],
+          ),
+        ),
+
+        // Source Badge
+        DataCell(
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: lead.isWebhookSource
+                  ? const Color(0xFF38BDF8).withValues(alpha: 0.12)
+                  : const Color(0xFF10B981).withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(
+                color: lead.isWebhookSource
+                    ? const Color(0xFF38BDF8).withValues(alpha: 0.35)
+                    : const Color(0xFF10B981).withValues(alpha: 0.35),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  lead.isWebhookSource ? Icons.bolt_rounded : Icons.table_chart_rounded,
+                  size: 13,
+                  color: lead.isWebhookSource ? const Color(0xFF38BDF8) : const Color(0xFF10B981),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  lead.isWebhookSource ? 'Webhook' : 'Excel Sheet',
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: lead.isWebhookSource ? const Color(0xFF38BDF8) : const Color(0xFF10B981),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
 
