@@ -279,6 +279,7 @@ class AdminStateService extends ChangeNotifier {
         (snapshot) {
           if (snapshot.docs.isNotEmpty) {
             final liveLeads = snapshot.docs.map((doc) => AdminLead.fromFirestore(doc)).toList();
+            liveLeads.sort((a, b) => b.createdAt.compareTo(a.createdAt));
             _leads = liveLeads;
             _isLiveConnected = true;
             _firestoreSyncCount++;
@@ -820,7 +821,7 @@ class AdminStateService extends ChangeNotifier {
             ...item,
             'createdAt': FieldValue.serverTimestamp(),
             'updatedAt': FieldValue.serverTimestamp(),
-            'source': 'Google Sheets / Takse Webhook',
+            'source': 'Excel',
           }, SetOptions(merge: true));
         }
         await batch.commit();

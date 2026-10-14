@@ -49,6 +49,10 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
 
     if (_selectedTimeSlot == 'today') {
       return dt.year == now.year && dt.month == now.month && dt.day == now.day;
+    } else if (_selectedTimeSlot == '7days') {
+      return now.difference(dt).inDays <= 7;
+    } else if (_selectedTimeSlot == '30days') {
+      return now.difference(dt).inDays <= 30;
     } else if (_selectedTimeSlot == 'morning') {
       return dt.hour >= 6 && dt.hour < 12;
     } else if (_selectedTimeSlot == 'afternoon') {
@@ -1948,6 +1952,8 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                         items: const [
                           DropdownMenuItem(value: 'all', child: Text('🕒 All Time')),
                           DropdownMenuItem(value: 'today', child: Text('📅 Today Only')),
+                          DropdownMenuItem(value: '7days', child: Text('🗓️ Last 7 Days')),
+                          DropdownMenuItem(value: '30days', child: Text('🗓️ Last 30 Days')),
                           DropdownMenuItem(value: 'morning', child: Text('🌅 Morning (6 AM - 12 PM)')),
                           DropdownMenuItem(value: 'afternoon', child: Text('☀️ Afternoon (12 PM - 6 PM)')),
                           DropdownMenuItem(value: 'evening', child: Text('🌙 Evening / Night (6 PM - 12 AM)')),
@@ -1979,9 +1985,9 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                         dropdownColor: AdminColors.surfaceElevated,
                         style: GoogleFonts.inter(fontSize: 12, color: AdminColors.textPrimary),
                         items: const [
-                          DropdownMenuItem(value: 'all', child: Text('⚡ All Sources (Webhook & Excel)')),
-                          DropdownMenuItem(value: 'webhook', child: Text('🌐 Webhook / API Inflow')),
-                          DropdownMenuItem(value: 'sheet', child: Text('📊 Excel / CSV / Sheet')),
+                          DropdownMenuItem(value: 'all', child: Text('⚡ All Sources')),
+                          DropdownMenuItem(value: 'webhook', child: Text('🌐 Webhook')),
+                          DropdownMenuItem(value: 'sheet', child: Text('📊 Excel')),
                         ],
                         onChanged: (val) {
                           if (val != null) {
@@ -2040,7 +2046,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                   columnSpacing: 24,
                   columns: const [
                     DataColumn(label: Text('LEAD PROFILE')),
-                    DataColumn(label: Text('SOURCE')),
+                    DataColumn(label: Text('SOURCE & TIME')),
                     DataColumn(label: Text('BUSINESS / LOCATION')),
                     DataColumn(label: Text('TYPE')),
                     DataColumn(label: Text('STATUS & ALLOCATED ORG')),
@@ -2085,40 +2091,65 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                           ),
                         ),
 
-                        // Source Badge (Webhook API vs Excel Sheet)
+                        // Source Badge (Webhook vs Excel) & Arrival Timestamp
                         DataCell(
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: lead.isWebhookSource
-                                  ? const Color(0xFF38BDF8).withValues(alpha: 0.12)
-                                  : const Color(0xFF10B981).withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(
-                                color: lead.isWebhookSource
-                                    ? const Color(0xFF38BDF8).withValues(alpha: 0.35)
-                                    : const Color(0xFF10B981).withValues(alpha: 0.35),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  lead.isWebhookSource ? Icons.bolt_rounded : Icons.table_chart_rounded,
-                                  size: 13,
-                                  color: lead.isWebhookSource ? const Color(0xFF38BDF8) : const Color(0xFF10B981),
-                                ),
-                                const SizedBox(width: 5),
-                                Text(
-                                  lead.isWebhookSource ? 'Webhook' : 'Excel Sheet',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                    color: lead.isWebhookSource ? const Color(0xFF38BDF8) : const Color(0xFF10B981),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: lead.isWebhookSource
+                                      ? const Color(0xFF38BDF8).withValues(alpha: 0.12)
+                                      : const Color(0xFF10B981).withValues(alpha: 0.12),
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: lead.isWebhookSource
+                                        ? const Color(0xFF38BDF8).withValues(alpha: 0.35)
+                                        : const Color(0xFF10B981).withValues(alpha: 0.35),
                                   ),
                                 ),
-                              ],
-                            ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      lead.isWebhookSource ? Icons.bolt_rounded : Icons.table_chart_rounded,
+                                      size: 12,
+                                      color: lead.isWebhookSource ? const Color(0xFF38BDF8) : const Color(0xFF10B981),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      lead.isWebhookSource ? 'Webhook' : 'Excel',
+                                      style: GoogleFonts.inter(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                        color: lead.isWebhookSource ? const Color(0xFF38BDF8) : const Color(0xFF10B981),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Tooltip(
+                                message: lead.formattedCreatedAtFull,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.access_time_rounded, size: 11, color: AdminColors.textMuted),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      lead.formattedCreatedAt,
+                                      style: GoogleFonts.jetBrainsMono(
+                                        fontSize: 10,
+                                        color: AdminColors.textSecondary,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
 

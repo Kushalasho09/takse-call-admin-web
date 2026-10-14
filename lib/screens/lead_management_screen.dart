@@ -19,6 +19,7 @@ class _LeadManagementScreenState extends State<LeadManagementScreen> {
   String _selectedKyc = 'all';
   String _selectedUserType = 'all';
   String _selectedSource = 'all';
+  String _selectedTimeFilter = 'all';
   int _currentPage = 0;
   static const int _pageSize = 15;
 
@@ -554,6 +555,23 @@ function syncLeadsProcess(forceAll) {
             if (_selectedSource == 'webhook' && !lead.isWebhookSource) return false;
             if (_selectedSource == 'sheet' && !lead.isSheetSource) return false;
           }
+          if (_selectedTimeFilter != 'all') {
+            final dt = lead.createdAt;
+            final now = DateTime.now();
+            if (_selectedTimeFilter == 'today') {
+              if (dt.year != now.year || dt.month != now.month || dt.day != now.day) return false;
+            } else if (_selectedTimeFilter == '7days') {
+              if (now.difference(dt).inDays > 7) return false;
+            } else if (_selectedTimeFilter == '30days') {
+              if (now.difference(dt).inDays > 30) return false;
+            } else if (_selectedTimeFilter == 'morning') {
+              if (dt.hour < 6 || dt.hour >= 12) return false;
+            } else if (_selectedTimeFilter == 'afternoon') {
+              if (dt.hour < 12 || dt.hour >= 18) return false;
+            } else if (_selectedTimeFilter == 'evening') {
+              if (dt.hour < 18 && dt.hour >= 6) return false;
+            }
+          }
           if (query.isNotEmpty) {
             final mName = lead.name.toLowerCase().contains(query);
             final mPhone = lead.mobileNumber.toLowerCase().contains(query);
@@ -920,6 +938,35 @@ function syncLeadsProcess(forceAll) {
                       ),
                     );
 
+                    final timeFilterWidget = Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                        color: AdminColors.surfaceSubtle,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: AdminColors.border),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: _selectedTimeFilter,
+                          dropdownColor: AdminColors.surfaceElevated,
+                          style: GoogleFonts.inter(color: AdminColors.textPrimary, fontSize: 13),
+                          items: const [
+                            DropdownMenuItem(value: 'all', child: Text('🕒 All Time')),
+                            DropdownMenuItem(value: 'today', child: Text('📅 Today Only')),
+                            DropdownMenuItem(value: '7days', child: Text('🗓️ Last 7 Days')),
+                            DropdownMenuItem(value: '30days', child: Text('🗓️ Last 30 Days')),
+                            DropdownMenuItem(value: 'morning', child: Text('🌅 Morning')),
+                            DropdownMenuItem(value: 'afternoon', child: Text('☀️ Afternoon')),
+                            DropdownMenuItem(value: 'evening', child: Text('🌙 Evening')),
+                          ],
+                          onChanged: (v) => setState(() {
+                            _selectedTimeFilter = v ?? 'all';
+                            _currentPage = 0;
+                          }),
+                        ),
+                      ),
+                    );
+
                     final sourceFilterWidget = Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       decoration: BoxDecoration(
@@ -934,8 +981,8 @@ function syncLeadsProcess(forceAll) {
                           style: GoogleFonts.inter(color: AdminColors.textPrimary, fontSize: 13),
                           items: const [
                             DropdownMenuItem(value: 'all', child: Text('⚡ All Sources')),
-                            DropdownMenuItem(value: 'webhook', child: Text('🌐 Webhook API')),
-                            DropdownMenuItem(value: 'sheet', child: Text('📊 Excel / Sheet')),
+                            DropdownMenuItem(value: 'webhook', child: Text('🌐 Webhook')),
+                            DropdownMenuItem(value: 'sheet', child: Text('📊 Excel')),
                           ],
                           onChanged: (v) => setState(() {
                             _selectedSource = v ?? 'all';
@@ -991,6 +1038,7 @@ function syncLeadsProcess(forceAll) {
                               kycFilterWidget,
                               userTypeWidget,
                               sourceFilterWidget,
+                              timeFilterWidget,
                               countPillWidget,
                             ],
                           ),
@@ -1030,6 +1078,8 @@ function syncLeadsProcess(forceAll) {
                         userTypeWidget,
                         const SizedBox(width: 14),
                         sourceFilterWidget,
+                        const SizedBox(width: 14),
+                        timeFilterWidget,
                         const SizedBox(width: 14),
                         countPillWidget,
                       ],
@@ -1091,7 +1141,7 @@ function syncLeadsProcess(forceAll) {
                                 headingRowColor: WidgetStateProperty.all(AdminColors.surfaceElevated),
                                 columns: [
                                   DataColumn(label: Text('LEAD NAME & PHONE', style: _colHeaderStyle)),
-                                  DataColumn(label: Text('SOURCE', style: _colHeaderStyle)),
+                                  DataColumn(label: Text('SOURCE & TIME', style: _colHeaderStyle)),
                                   DataColumn(label: Text('EMAIL', style: _colHeaderStyle)),
                                   DataColumn(label: Text('USER TYPE', style: _colHeaderStyle)),
                                   DataColumn(label: Text('STATE & DISTRICT', style: _colHeaderStyle)),
@@ -1233,40 +1283,65 @@ function syncLeadsProcess(forceAll) {
           ),
         ),
 
-        // Source Badge
+        // Source Badge & Arrival Timestamp
         DataCell(
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: lead.isWebhookSource
-                  ? const Color(0xFF38BDF8).withValues(alpha: 0.12)
-                  : const Color(0xFF10B981).withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(
-                color: lead.isWebhookSource
-                    ? const Color(0xFF38BDF8).withValues(alpha: 0.35)
-                    : const Color(0xFF10B981).withValues(alpha: 0.35),
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  lead.isWebhookSource ? Icons.bolt_rounded : Icons.table_chart_rounded,
-                  size: 13,
-                  color: lead.isWebhookSource ? const Color(0xFF38BDF8) : const Color(0xFF10B981),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  lead.isWebhookSource ? 'Webhook' : 'Excel Sheet',
-                  style: GoogleFonts.inter(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: lead.isWebhookSource ? const Color(0xFF38BDF8) : const Color(0xFF10B981),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: lead.isWebhookSource
+                      ? const Color(0xFF38BDF8).withValues(alpha: 0.12)
+                      : const Color(0xFF10B981).withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(
+                    color: lead.isWebhookSource
+                        ? const Color(0xFF38BDF8).withValues(alpha: 0.35)
+                        : const Color(0xFF10B981).withValues(alpha: 0.35),
                   ),
                 ),
-              ],
-            ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      lead.isWebhookSource ? Icons.bolt_rounded : Icons.table_chart_rounded,
+                      size: 12,
+                      color: lead.isWebhookSource ? const Color(0xFF38BDF8) : const Color(0xFF10B981),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      lead.isWebhookSource ? 'Webhook' : 'Excel',
+                      style: GoogleFonts.inter(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: lead.isWebhookSource ? const Color(0xFF38BDF8) : const Color(0xFF10B981),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 4),
+              Tooltip(
+                message: lead.formattedCreatedAtFull,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.access_time_rounded, size: 11, color: AdminColors.textMuted),
+                    const SizedBox(width: 4),
+                    Text(
+                      lead.formattedCreatedAt,
+                      style: GoogleFonts.jetBrainsMono(
+                        fontSize: 10,
+                        color: AdminColors.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
 

@@ -319,20 +319,61 @@ class AdminLead {
 
   bool get isAssigned => assignmentStatus.toLowerCase() == 'assigned' || assignedToUserId.isNotEmpty || assignedOrgId.isNotEmpty;
 
-  bool get isWebhookSource {
-    final s = source.toLowerCase();
-    return s.contains('webhook') || s.contains('api') || s == 'takse_api';
+  bool get isSheetSource {
+    final s = source.toLowerCase().trim();
+    // 1. Explicit sheet / excel / csv / google keywords
+    if (s.contains('sheet') || s.contains('excel') || s.contains('csv') || s.contains('google')) {
+      return true;
+    }
+    // 2. If not webhook, default to Excel
+    return !isWebhookSource;
   }
 
-  bool get isSheetSource {
-    final s = source.toLowerCase();
-    return s.contains('sheet') || s.contains('excel') || s.contains('csv');
+  bool get isWebhookSource {
+    final s = source.toLowerCase().trim();
+    // If it contains sheet / excel / csv / google, it is Excel/Sheet
+    if (s.contains('sheet') || s.contains('excel') || s.contains('csv') || s.contains('google')) {
+      return false;
+    }
+    // Webhook source: contains takse_api, webhook, or api
+    return s.contains('takse_api') || s.contains('webhook') || s.contains('api');
   }
 
   String get sourceDisplayName {
-    if (isSheetSource) return 'Excel / Sheet';
-    if (isWebhookSource) return 'Webhook / API';
-    return source.isNotEmpty ? source : 'Webhook / API';
+    return isWebhookSource ? 'Webhook' : 'Excel';
+  }
+
+  String get formattedCreatedAt {
+    final dt = createdAt;
+    final now = DateTime.now();
+    final isToday = dt.year == now.year && dt.month == now.month && dt.day == now.day;
+    final yesterday = now.subtract(const Duration(days: 1));
+    final isYesterday = dt.year == yesterday.year && dt.month == yesterday.month && dt.day == yesterday.day;
+
+    final hour12 = dt.hour == 0 ? 12 : (dt.hour > 12 ? dt.hour - 12 : dt.hour);
+    final ampm = dt.hour >= 12 ? 'PM' : 'AM';
+    final minuteStr = dt.minute.toString().padLeft(2, '0');
+    final timeStr = '$hour12:$minuteStr $ampm';
+
+    if (isToday) {
+      return 'Today, $timeStr';
+    } else if (isYesterday) {
+      return 'Yesterday, $timeStr';
+    } else {
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      final monthStr = months[dt.month - 1];
+      return '${dt.day} $monthStr, $timeStr';
+    }
+  }
+
+  String get formattedCreatedAtFull {
+    final dt = createdAt;
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    final monthStr = months[dt.month - 1];
+    final hour12 = dt.hour == 0 ? 12 : (dt.hour > 12 ? dt.hour - 12 : dt.hour);
+    final ampm = dt.hour >= 12 ? 'PM' : 'AM';
+    final minuteStr = dt.minute.toString().padLeft(2, '0');
+    return '${dt.day} $monthStr ${dt.year}, $hour12:$minuteStr $ampm';
   }
 
   AdminLead({
@@ -360,17 +401,20 @@ class AdminLead {
     this.assignedToUserName = '',
     this.assignedAt,
     this.assignmentStatus = 'unassigned',
-    this.source = 'takse_api',
+    this.source = 'Excel',
   });
 
   factory AdminLead.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>? ?? {};
 
     DateTime created = DateTime.now();
-    if (data['createdAt'] is Timestamp) {
-      created = (data['createdAt'] as Timestamp).toDate();
-    } else if (data['created_at'] is Timestamp) {
-      created = (data['created_at'] as Timestamp).toDate();
+    final rawCreated = data['createdAt'] ?? data['created_at'] ?? data['timestamp'] ?? data['occurred_at'];
+    if (rawCreated is Timestamp) {
+      created = rawCreated.toDate();
+    } else if (rawCreated is int) {
+      created = DateTime.fromMillisecondsSinceEpoch(rawCreated);
+    } else if (rawCreated is String && rawCreated.trim().isNotEmpty) {
+      created = DateTime.tryParse(rawCreated.trim()) ?? DateTime.now();
     }
 
     DateTime? assignedDate;
@@ -395,6 +439,9 @@ class AdminLead {
     final statusDerived = rawAssignedStatus.isNotEmpty
         ? rawAssignedStatus
         : (userId.isNotEmpty || orgId.isNotEmpty ? 'assigned' : 'unassigned');
+
+    final rawSource = (data['source'] ?? data['Source'] ?? '').toString().trim();
+    final sourceVal = rawSource.isNotEmpty ? rawSource : 'Excel';
 
     return AdminLead(
       id: doc.id,
@@ -421,7 +468,7 @@ class AdminLead {
       assignedToUserName: userName,
       assignedAt: assignedDate,
       assignmentStatus: statusDerived,
-      source: (data['source'] ?? data['Source'] ?? 'takse_api').toString(),
+      source: sourceVal,
     );
   }
 
@@ -435,6 +482,21 @@ class AdminLead {
         : int.tryParse(map['orders']?.toString() ?? '0') ?? 0;
 
     final phone = (map['mobile_number'] ?? map['mobileNumber'] ?? map['phone'] ?? '').toString().trim();
+
+    DateTime created = DateTime.now();
+    final rawCreated = map['createdAt'] ?? map['created_at'] ?? map['timestamp'] ?? map['occurred_at'];
+    if (rawCreated is DateTime) {
+      created = rawCreated;
+    } else if (rawCreated is Timestamp) {
+      created = rawCreated.toDate();
+    } else if (rawCreated is int) {
+      created = DateTime.fromMillisecondsSinceEpoch(rawCreated);
+    } else if (rawCreated is String && rawCreated.trim().isNotEmpty) {
+      created = DateTime.tryParse(rawCreated.trim()) ?? DateTime.now();
+    }
+
+    final rawSource = (map['source'] ?? map['Source'] ?? '').toString().trim();
+    final sourceVal = rawSource.isNotEmpty ? rawSource : 'Excel';
 
     return AdminLead(
       id: id ?? phone,
@@ -454,14 +516,14 @@ class AdminLead {
       village: (map['Village'] ?? map['village'] ?? '').toString().trim(),
       pincode: (map['Pincode'] ?? map['pincode'] ?? '').toString().trim(),
       shopName: (map['Shop Name'] ?? map['shopName'] ?? map['shop_name'] ?? '').toString().trim(),
-      createdAt: DateTime.now(),
+      createdAt: created,
       assignedOrgId: (map['assignedOrgId'] ?? '').toString(),
       assignedOrgName: (map['assignedOrgName'] ?? '').toString(),
       assignedToUserId: (map['assignedToUserId'] ?? '').toString(),
       assignedToUserName: (map['assignedToUserName'] ?? '').toString(),
       assignedAt: map['assignedAt'] is DateTime ? map['assignedAt'] as DateTime : null,
       assignmentStatus: (map['assignmentStatus'] ?? 'unassigned').toString(),
-      source: (map['source'] ?? map['Source'] ?? 'takse_api').toString(),
+      source: sourceVal,
     );
   }
 
