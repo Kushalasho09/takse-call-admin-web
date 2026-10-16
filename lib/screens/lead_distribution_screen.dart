@@ -143,7 +143,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
     if (unassignedLeads.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Sabhi leads already organizations ko send ho chuki hain! Koi pending lead nahi hai.'),
+          content: Text('Sabhi leads already departments ko send ho chuki hain! Koi pending lead nahi hai.'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -154,7 +154,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
     if (allOrgs.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Koi client organization nahi mili. Pehle Organizations create karein.'),
+          content: Text('Koi department nahi mila. Pehle Departments create karein.'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -195,11 +195,11 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Auto Distribute Leads to Organizations',
+                        'Auto Distribute Leads to Departments',
                         style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 17, color: AdminColors.textPrimary),
                       ),
                       Text(
-                        'Equal quota division across Client Organizations (Admin ➔ Organizations)',
+                        'Equal quota division across Internal Departments (Admin ➔ Departments)',
                         style: GoogleFonts.inter(fontSize: 11, color: AdminColors.textSecondary),
                       ),
                     ],
@@ -233,7 +233,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'ORGANIZATION QUOTA PREVIEW',
+                                'DEPARTMENT QUOTA PREVIEW',
                                 style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w800, color: const Color(0xFF10B981), letterSpacing: 1.0),
                               ),
                               Container(
@@ -256,9 +256,9 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Selected Orgs', style: GoogleFonts.inter(fontSize: 11, color: AdminColors.textTertiary)),
+                                    Text('Selected Depts', style: GoogleFonts.inter(fontSize: 11, color: AdminColors.textTertiary)),
                                     const SizedBox(height: 2),
-                                    Text('$orgCount Organizations', style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: AdminColors.textPrimary)),
+                                    Text('$orgCount Departments', style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: AdminColors.textPrimary)),
                                   ],
                                 ),
                               ),
@@ -270,7 +270,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                                   children: [
                                     Text('Equal Share', style: GoogleFonts.inter(fontSize: 11, color: AdminColors.textTertiary)),
                                     const SizedBox(height: 2),
-                                    Text('$basePerOrg leads / org', style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xFF38BDF8))),
+                                    Text('$basePerOrg leads / dept', style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xFF38BDF8))),
                                   ],
                                 ),
                               ),
@@ -283,7 +283,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                                     children: [
                                       Text('Remainder (+1)', style: GoogleFonts.inter(fontSize: 11, color: AdminColors.textTertiary)),
                                       const SizedBox(height: 2),
-                                      Text('$remainder orgs get ${basePerOrg + 1}', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold, color: const Color(0xFFF59E0B))),
+                                      Text('$remainder depts get ${basePerOrg + 1}', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold, color: const Color(0xFFF59E0B))),
                                     ],
                                   ),
                                 ),
@@ -293,8 +293,8 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                           const SizedBox(height: 10),
                           Text(
                             orgCount > 0
-                                ? 'Super Admin se ye leads sidha Client Organizations ke pool me transfer hongi ($basePerOrg-each). Fir Organization owner apne portal se telecallers ko distribute karega.'
-                                : 'Please select at least one organization.',
+                                ? 'Super Admin se ye leads sidha Company Departments ke pool me transfer hongi ($basePerOrg-each). Fir Department head apne portal se telecallers ko distribute karega.'
+                                : 'Please select at least one department.',
                             style: GoogleFonts.inter(fontSize: 11.5, color: AdminColors.textSecondary, height: 1.4),
                           ),
                         ],
@@ -306,7 +306,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Select Target Organizations (${activeOrgs.length}/${allOrgs.length}):',
+                          'Select Target Departments (${activeOrgs.length}/${allOrgs.length}):',
                           style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: AdminColors.textPrimary),
                         ),
                         TextButton(
@@ -384,7 +384,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('🎉 $count leads successfully sent across ${activeOrgs.length} organizations!'),
+                              content: Text('🎉 $count leads successfully sent across ${activeOrgs.length} departments!'),
                               backgroundColor: const Color(0xFF059669),
                               behavior: SnackBarBehavior.floating,
                             ),
@@ -392,7 +392,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                         }
                       },
                 icon: const Icon(Icons.rocket_launch_rounded, size: 16),
-                label: Text('Distribute $leadsCount Leads to Orgs'),
+                label: Text('Distribute $leadsCount Leads to Depts'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF10B981),
                   foregroundColor: Colors.white,
@@ -416,7 +416,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
     if (unassignedLeads.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Sabhi leads already organizations ko assign ho chuki hain! Koi pending lead nahi hai.'),
+          content: Text('Sabhi leads already departments ko assign ho chuki hain! Koi pending lead nahi hai.'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -427,7 +427,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
     if (allOrgs.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Koi organization nahi mili. Pehle Organizations create karein.'),
+          content: Text('Koi department nahi mila. Pehle Departments create karein.'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -474,7 +474,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                         style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 17, color: AdminColors.textPrimary),
                       ),
                       Text(
-                        'Custom lead counts per Organization (e.g. Org 1: 10, Org 2: 5, Org 3: 15)',
+                        'Custom lead counts per Department (e.g. Dept 1: 10, Dept 2: 5, Dept 3: 15)',
                         style: GoogleFonts.inter(fontSize: 11, color: AdminColors.textSecondary),
                       ),
                     ],
@@ -555,7 +555,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    Text('Enter custom lead count for each Organization:', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: AdminColors.textPrimary)),
+                    Text('Enter custom lead count for each Department:', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: AdminColors.textPrimary)),
                     const SizedBox(height: 10),
 
                     ...allOrgs.map((org) {
@@ -665,7 +665,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('🎉 $count leads allocated successfully across organizations!'),
+                              content: Text('🎉 $count leads allocated successfully across departments!'),
                               backgroundColor: const Color(0xFF059669),
                               behavior: SnackBarBehavior.floating,
                             ),
@@ -695,7 +695,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
     final allOrgs = state.organizations;
     if (allOrgs.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No organizations found to assign.')),
+        const SnackBar(content: Text('No departments found to assign.')),
       );
       return;
     }
@@ -733,7 +733,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        lead.isAssigned ? 'Transfer Lead to Another Organization' : 'Send Lead to Organization',
+                        lead.isAssigned ? 'Transfer Lead to Another Department' : 'Send Lead to Department',
                         style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 16, color: AdminColors.textPrimary),
                       ),
                       Text(
@@ -766,7 +766,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              'Currently Assigned to: ${lead.assignedOrgName} (${lead.assignedOrgId}). Super Admin is lead ko kisi doosri organization ko transfer kar sakta hai.',
+                              'Currently Assigned to: ${lead.assignedOrgName} (${lead.assignedOrgId}). Super Admin is lead ko kisi doosre department ko transfer kar sakta hai.',
                               style: GoogleFonts.inter(fontSize: 11, color: AdminColors.textPrimary),
                             ),
                           ),
@@ -775,7 +775,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                     ),
                   ],
 
-                  Text('Select Target Client Organization:', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: AdminColors.textPrimary)),
+                  Text('Select Target Department:', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: AdminColors.textPrimary)),
                   const SizedBox(height: 6),
                   DropdownButtonFormField<String>(
                     initialValue: allOrgs.any((o) => o.id == selectedOrgId) ? selectedOrgId : allOrgs.first.id,
@@ -876,7 +876,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
               borderRadius: BorderRadius.circular(16),
               side: BorderSide(color: AdminColors.border),
             ),
-            title: Text('Send ${_selectedLeadIds.length} Selected Leads to Organization', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 16)),
+            title: Text('Send ${_selectedLeadIds.length} Selected Leads to Department', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 16)),
             content: SizedBox(
               width: 440,
               child: Column(
@@ -921,7 +921,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                     );
                   }
                 },
-                child: const Text('Send to Org'),
+                child: const Text('Send to Dept'),
               ),
             ],
           );
@@ -1048,7 +1048,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                     border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.4)),
                   ),
                   child: Text(
-                    'SUPER ADMIN ➔ CLIENT ORGANIZATIONS',
+                    'SUPER ADMIN ➔ COMPANY DEPARTMENTS',
                     style: GoogleFonts.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
@@ -1061,7 +1061,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
             ),
             const SizedBox(height: 4),
             Text(
-              'Global Inflow Webhook leads are received here. Super Admin distributes quotas only to Client Organizations.',
+              'Global Inflow Webhook leads are received here. Super Admin distributes quotas directly to Company Departments.',
               style: GoogleFonts.inter(fontSize: 13, color: AdminColors.textSecondary),
             ),
           ],
@@ -1157,20 +1157,20 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
         final card2 = _buildMetricCard(
           title: '⏳ Pending Leads',
           value: '${state.unassignedLeadsCount}',
-          subtitle: 'Waiting for Org Distribution',
+          subtitle: 'Waiting for Dept Distribution',
           icon: Icons.hourglass_top_rounded,
           color: const Color(0xFFF59E0B),
         );
         final card3 = _buildMetricCard(
-          title: '📤 Sent to Organizations',
+          title: '📤 Sent to Departments',
           value: '${state.assignedLeadsCount}',
-          subtitle: 'Distributed to Client Orgs',
+          subtitle: 'Distributed to Company Depts',
           icon: Icons.domain_verification_rounded,
           color: const Color(0xFF10B981),
         );
         final card4 = _buildMetricCard(
-          title: 'Client Organizations',
-          value: '${state.organizations.length} Orgs',
+          title: 'Company Departments',
+          value: '${state.organizations.length} Depts',
           subtitle: '${state.devices.length} Total Telecallers',
           icon: Icons.domain_rounded,
           color: const Color(0xFF38BDF8),
@@ -1302,13 +1302,13 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                       const Icon(Icons.bar_chart_rounded, size: 20, color: Color(0xFF38BDF8)),
                       const SizedBox(width: 8),
                       Text(
-                        'ORGANIZATION QUOTA SHARE & DISTRIBUTION RECORDS',
+                        'DEPARTMENT QUOTA SHARE & DISTRIBUTION RECORDS',
                         style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700, color: AdminColors.textPrimary, letterSpacing: 0.8),
                       ),
                     ],
                   ),
                   Text(
-                    '${allOrgs.length} Registered Organizations',
+                    '${allOrgs.length} Company Departments',
                     style: GoogleFonts.inter(fontSize: 11, color: AdminColors.textTertiary),
                   ),
                 ],
@@ -1510,7 +1510,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                     const Icon(Icons.south_rounded, size: 14, color: Color(0xFF10B981)),
                     const SizedBox(width: 6),
                     Text(
-                      'Distributed Quotas to Client Organizations',
+                      'Distributed Quotas to Company Departments',
                       style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600, color: AdminColors.textSecondary),
                     ),
                   ],
@@ -1521,7 +1521,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
           ),
         ),
 
-        // D. TIER 2 & TIER 3: Organizations & their Telecallers Branches
+        // D. TIER 2 & TIER 3: Departments & their Telecallers Branches
         if (allOrgs.isEmpty)
           Center(
             child: Container(
@@ -1532,7 +1532,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                 border: Border.all(color: AdminColors.border),
               ),
               child: Text(
-                'No Client Organizations registered yet. Create Organizations to distribute leads.',
+                'No Company Departments registered yet. Create Departments to distribute leads.',
                 style: GoogleFonts.inter(color: AdminColors.textSecondary),
               ),
             ),
@@ -2049,7 +2049,7 @@ class _LeadDistributionScreenState extends State<LeadDistributionScreen> {
                     DataColumn(label: Text('SOURCE & TIME')),
                     DataColumn(label: Text('BUSINESS / LOCATION')),
                     DataColumn(label: Text('TYPE')),
-                    DataColumn(label: Text('STATUS & ALLOCATED ORG')),
+                    DataColumn(label: Text('STATUS & ALLOCATED DEPT')),
                     DataColumn(label: Text('ACTIONS')),
                   ],
                   rows: pageItems.map((lead) {

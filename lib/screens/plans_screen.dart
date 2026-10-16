@@ -34,7 +34,7 @@ class PlansScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Plans & Subscription Tiers',
+                        'Plans & Subscription Tiers (White-Label)',
                         style: GoogleFonts.outfit(
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
@@ -43,7 +43,7 @@ class PlansScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Configure employee seat quotas, billing tiers, and live client renewals.',
+                        'Internal company mode active. Subscription pricing tiers & quotas are preserved for White-Label SaaS launch.',
                         style: GoogleFonts.inter(fontSize: 13, color: AdminColors.textSecondary),
                       ),
                     ],
@@ -72,7 +72,52 @@ class PlansScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
+
+              // Internal Company Mode Banner
+              Container(
+                margin: const EdgeInsets.only(bottom: 20),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AdminColors.primary.withValues(alpha: 0.15),
+                      AdminColors.surface,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: AdminColors.primary.withValues(alpha: 0.4)),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: AdminColors.primary.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(Icons.shield_outlined, color: AdminColors.primaryLight, size: 22),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Internal Single-Company Mode Active',
+                            style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.bold, color: AdminColors.primaryLight),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Your company departments operate freely under the master license without individual billing. Subscription tiers below are preserved and ready for when you launch White-Label multi-tenant SaaS.',
+                            style: GoogleFonts.inter(fontSize: 12, color: AdminColors.textSecondary),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
               // Expiring Accounts Alert Banner (Dynamic)
               if (expiringOrgs.isNotEmpty)

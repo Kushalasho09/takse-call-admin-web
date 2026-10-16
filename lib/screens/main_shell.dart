@@ -153,8 +153,8 @@ class MainShell extends StatelessWidget {
                 ),
                 _buildSidebarNavItem(
                   id: 'organizations',
-                  label: 'Organizations',
-                  icon: Icons.domain_rounded,
+                  label: 'Departments',
+                  icon: Icons.corporate_fare_rounded,
                   badge: '${state.totalOrganizations}',
                   state: state,
                 ),
@@ -187,7 +187,7 @@ class MainShell extends StatelessWidget {
                 _buildSidebarSectionLabel('BILLING & LOGS'),
                 _buildSidebarNavItem(
                   id: 'plans',
-                  label: 'Plans & Pricing',
+                  label: 'Plans & Pricing (White-Label)',
                   icon: Icons.credit_card_rounded,
                   state: state,
                 ),

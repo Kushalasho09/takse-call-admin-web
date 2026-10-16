@@ -72,7 +72,7 @@ class OverviewScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Global telemetry, organization health, and real-time SIM call sync overview.',
+                        'Global telemetry, department health, and real-time SIM call sync overview.',
                         style: GoogleFonts.inter(
                           fontSize: 13,
                           color: AdminColors.textSecondary,
@@ -85,7 +85,7 @@ class OverviewScreen extends StatelessWidget {
                       ElevatedButton.icon(
                         onPressed: () => state.setSection('organizations'),
                         icon: const Icon(Icons.add_business_rounded, size: 16),
-                        label: const Text('Add Organization'),
+                        label: const Text('Add Department'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AdminColors.primary,
                           foregroundColor: Colors.white,
@@ -118,12 +118,12 @@ class OverviewScreen extends StatelessWidget {
                     mainAxisExtent: 142,
                     children: [
                       _buildMetricCard(
-                        title: 'Total Organizations',
+                        title: 'Total Departments',
                         value: '${state.totalOrganizations}',
-                        subtext: '${state.activeOrganizations} Active Organizations',
-                        icon: Icons.domain_rounded,
+                        subtext: '${state.activeOrganizations} Active Departments',
+                        icon: Icons.corporate_fare_rounded,
                         accentColor: AdminColors.primary,
-                        growth: state.newOrgsThisWeek > 0 ? '+${state.newOrgsThisWeek} this week' : 'Active tenants',
+                        growth: state.newOrgsThisWeek > 0 ? '+${state.newOrgsThisWeek} this week' : 'Active units',
                       ),
                       _buildMetricCard(
                         title: 'Active Agents / Phones',
@@ -258,7 +258,7 @@ class OverviewScreen extends StatelessWidget {
                                         const Icon(Icons.leaderboard_rounded, color: AdminColors.accentPurple, size: 20),
                                         const SizedBox(width: 8),
                                         Text(
-                                          'Top Organizations',
+                                          'Top Departments',
                                           style: GoogleFonts.outfit(
                                             fontSize: 16,
                                             fontWeight: FontWeight.w700,
@@ -273,7 +273,7 @@ class OverviewScreen extends StatelessWidget {
                                         padding: const EdgeInsets.symmetric(vertical: 24),
                                         child: Center(
                                           child: Text(
-                                            'No client organizations registered yet.',
+                                            'No company departments registered yet.',
                                             style: GoogleFonts.inter(fontSize: 12, color: AdminColors.textTertiary),
                                           ),
                                         ),

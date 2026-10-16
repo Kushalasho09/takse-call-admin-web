@@ -53,7 +53,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
               ),
               const SizedBox(width: 12),
               Text(
-                'Register New Organization',
+                'Register New Department',
                 style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 18, color: AdminColors.textPrimary),
               ),
             ],
@@ -66,22 +66,22 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Create an enterprise client tenant with an auto-generated Device Connect Code.',
+                    'Add an internal company department (e.g. Sales, Frontend, QA, Support) with an auto-generated Device Connect Code.',
                     style: GoogleFonts.inter(fontSize: 12, color: AdminColors.textSecondary),
                   ),
                   const SizedBox(height: 18),
 
-                  _buildDialogField('Company / Business Name', nameCtrl, 'e.g. Apex Marketing Labs'),
+                  _buildDialogField('Department Name', nameCtrl, 'e.g. Sales Team, Frontend, QA'),
                   const SizedBox(height: 14),
 
-                  _buildDialogField('Owner / Admin Full Name', ownerCtrl, 'e.g. Rajesh Kumar'),
+                  _buildDialogField('Department Head / Manager Name', ownerCtrl, 'e.g. Rajesh Kumar'),
                   const SizedBox(height: 14),
 
                   Row(
                     children: [
-                      Expanded(child: _buildDialogField('Admin Mobile Number', phoneCtrl, '+91 98765 43210')),
+                      Expanded(child: _buildDialogField('Manager Mobile Number', phoneCtrl, '+91 98765 43210')),
                       const SizedBox(width: 12),
-                      Expanded(child: _buildDialogField('Admin Email Address', emailCtrl, 'rajesh@company.in')),
+                      Expanded(child: _buildDialogField('Manager Email Address', emailCtrl, 'rajesh@company.in')),
                     ],
                   ),
                   const SizedBox(height: 14),
@@ -132,7 +132,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Max Employees Allowed', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: AdminColors.textPrimary)),
+                            Text('Max Team Members Quota', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: AdminColors.textPrimary)),
                             const SizedBox(height: 6),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -144,7 +144,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('$limit Employees', style: GoogleFonts.inter(color: AdminColors.textPrimary, fontSize: 13, fontWeight: FontWeight.bold)),
+                                  Text('$limit Members', style: GoogleFonts.inter(color: AdminColors.textPrimary, fontSize: 13, fontWeight: FontWeight.bold)),
                                   Row(
                                     children: [
                                       IconButton(
@@ -193,7 +193,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                 Navigator.pop(ctx);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Organization "${nameCtrl.text}" created successfully with unique Connect Code!'),
+                    content: Text('Department "${nameCtrl.text}" registered successfully with unique Connect Code!'),
                     backgroundColor: AdminColors.success,
                     behavior: SnackBarBehavior.floating,
                   ),
@@ -204,7 +204,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
-              child: const Text('Create Organization'),
+              child: const Text('Create Department'),
             ),
           ],
         ),
@@ -226,7 +226,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
             side: BorderSide(color: AdminColors.border),
           ),
           title: Text(
-            'Modify Limits: ${org.name}',
+            'Modify Quota: ${org.name}',
             style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 18, color: AdminColors.textPrimary),
           ),
           content: SizedBox(
@@ -236,12 +236,12 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Adjust the max employee/agent seat quota for this client. They can connect phones up to this limit.',
+                  'Adjust the max employee/agent seat quota for this department. They can connect phones up to this limit.',
                   style: GoogleFonts.inter(fontSize: 12, color: AdminColors.textSecondary),
                 ),
                 const SizedBox(height: 20),
 
-                Text('Plan Tier', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: AdminColors.textPrimary)),
+                Text('License Tier', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: AdminColors.textPrimary)),
                 const SizedBox(height: 6),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -396,7 +396,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Client Organizations',
+                        'Company Departments',
                         style: GoogleFonts.outfit(
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
@@ -405,7 +405,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Manage company accounts, employee seat quotas, connect codes, and subscription status.',
+                        'Manage internal company departments, employee seat quotas, connect codes, and operational status.',
                         style: GoogleFonts.inter(fontSize: 13, color: AdminColors.textSecondary),
                       ),
                     ],
@@ -438,7 +438,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                       ElevatedButton.icon(
                         onPressed: () => _showAddOrgDialog(context),
                         icon: const Icon(Icons.add_rounded, size: 18),
-                        label: const Text('Add Organization'),
+                        label: const Text('Add Department'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AdminColors.primary,
                           foregroundColor: Colors.white,
@@ -470,7 +470,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                         onChanged: (_) => setState(() {}),
                         style: GoogleFonts.inter(fontSize: 13, color: AdminColors.textPrimary),
                         decoration: InputDecoration(
-                          hintText: 'Search company, owner, connect code, or phone...',
+                          hintText: 'Search department, head, connect code, or phone...',
                           prefixIcon: Icon(Icons.search_rounded, color: AdminColors.textSecondary, size: 18),
                           isDense: true,
                           contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -518,7 +518,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        '${list.length} Organizations',
+                        '${list.length} Departments',
                         style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: AdminColors.textSecondary),
                       ),
                     ),
@@ -544,12 +544,12 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                               Icon(Icons.business_outlined, size: 48, color: AdminColors.textTertiary.withValues(alpha: 0.5)),
                               const SizedBox(height: 12),
                               Text(
-                                state.isLiveConnected ? 'No matching client organizations found.' : 'Loading live organizations from Firestore...',
+                                state.isLiveConnected ? 'No matching departments found.' : 'Loading live departments from Firestore...',
                                 style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: AdminColors.textSecondary),
                               ),
                               const SizedBox(height: 6),
                               Text(
-                                'Click "Sync Now" to refresh or "Add Organization" to register a new tenant.',
+                                'Click "Sync Now" to refresh or "Add Department" to register a new department.',
                                 style: GoogleFonts.inter(fontSize: 12, color: AdminColors.textTertiary),
                               ),
                             ],
@@ -570,10 +570,10 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                                   : AdminColors.surface,
                             ),
                             columns: [
-                              DataColumn(label: Text('ORGANIZATION & CODE', style: _colHeaderStyle)),
-                              DataColumn(label: Text('OWNER & CONTACT', style: _colHeaderStyle)),
+                              DataColumn(label: Text('DEPARTMENT & CODE', style: _colHeaderStyle)),
+                              DataColumn(label: Text('HEAD & CONTACT', style: _colHeaderStyle)),
                               DataColumn(label: Text('SEAT QUOTA', style: _colHeaderStyle)),
-                              DataColumn(label: Text('PLAN', style: _colHeaderStyle)),
+                              DataColumn(label: Text('LICENSE TIER', style: _colHeaderStyle)),
                               DataColumn(label: Text('CALLS SYNCED', style: _colHeaderStyle)),
                               DataColumn(label: Text('STATUS', style: _colHeaderStyle)),
                               DataColumn(label: Text('RENEWAL DATE', style: _colHeaderStyle)),
@@ -816,11 +816,11 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
               ),
               IconButton(
                 icon: Icon(Icons.open_in_new_rounded, size: 16, color: AdminColors.textSecondary),
-                tooltip: 'Log In As Client (Impersonate Portal)',
+                tooltip: 'Open Department Portal',
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Impersonating ${org.name} Portal session (Connect Code: ${org.connectCode}).'),
+                      content: Text('Opening ${org.name} Department Portal session (Connect Code: ${org.connectCode}).'),
                       backgroundColor: AdminColors.primaryDark,
                       behavior: SnackBarBehavior.floating,
                     ),
