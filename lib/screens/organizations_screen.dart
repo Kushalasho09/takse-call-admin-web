@@ -29,8 +29,8 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
     final ownerCtrl = TextEditingController();
     final phoneCtrl = TextEditingController(text: '+91 ');
     final emailCtrl = TextEditingController();
-    String selectedPlan = 'Starter Plan';
-    int limit = 5;
+    String selectedPlan = 'Enterprise';
+    int limit = 10;
 
     showDialog(
       context: context,
@@ -86,6 +86,9 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                   ),
                   const SizedBox(height: 14),
 
+                  /*
+                  // NOTE: Subscription plan selection is reserved for White-Label SaaS mode.
+                  // For internal company departments, all features operate under the Master Enterprise License.
                   Row(
                     children: [
                       Expanded(
@@ -128,42 +131,59 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                    ],
+                  ),
+                  */
+
+                  // Super Admin assigns the Agent Seat Quota directly
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Super Admin Assigned Seats Quota', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: AdminColors.textPrimary)),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: AdminColors.primaryGlow,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              'Master License',
+                              style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.bold, color: AdminColors.primaryLight),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: AdminColors.surfaceSubtle,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: AdminColors.border),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Max Team Members Quota', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: AdminColors.textPrimary)),
-                            const SizedBox(height: 6),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                              decoration: BoxDecoration(
-                                color: AdminColors.surfaceSubtle,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: AdminColors.border),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text('$limit Members', style: GoogleFonts.inter(color: AdminColors.textPrimary, fontSize: 13, fontWeight: FontWeight.bold)),
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                        padding: EdgeInsets.zero,
-                                        constraints: const BoxConstraints(),
-                                        icon: Icon(Icons.remove_circle_outline_rounded, size: 18, color: AdminColors.textSecondary),
-                                        onPressed: limit > 1 ? () => setDlgState(() => limit--) : null,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      IconButton(
-                                        padding: EdgeInsets.zero,
-                                        constraints: const BoxConstraints(),
-                                        icon: const Icon(Icons.add_circle_outline_rounded, size: 18, color: AdminColors.primaryLight),
-                                        onPressed: () => setDlgState(() => limit++),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                            Text('$limit Allowed Employee Phones', style: GoogleFonts.inter(color: AdminColors.textPrimary, fontSize: 13, fontWeight: FontWeight.bold)),
+                            Row(
+                              children: [
+                                IconButton(
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  icon: Icon(Icons.remove_circle_outline_rounded, size: 20, color: AdminColors.textSecondary),
+                                  onPressed: limit > 1 ? () => setDlgState(() => limit--) : null,
+                                ),
+                                const SizedBox(width: 12),
+                                IconButton(
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  icon: const Icon(Icons.add_circle_outline_rounded, size: 20, color: AdminColors.primaryLight),
+                                  onPressed: () => setDlgState(() => limit++),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -241,6 +261,8 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                 ),
                 const SizedBox(height: 20),
 
+                /*
+                // NOTE: Tier dropdown preserved for White-Label multi-tenant mode.
                 Text('License Tier', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: AdminColors.textPrimary)),
                 const SizedBox(height: 6),
                 Container(
@@ -274,6 +296,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
+                */
 
                 Text('Employee Seat Limit', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: AdminColors.textPrimary)),
                 const SizedBox(height: 6),
